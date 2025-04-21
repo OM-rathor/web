@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>To-Do List</title>
+</head>
+<body style="margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e2f; color: #f0f0f0;">
+
+  <div style="max-width: 600px; margin: 60px auto; padding: 30px; background: #2c2c3e; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+    <h2 style="text-align: center; margin-bottom: 30px; color: #00e0ff;">💼 To-Do List</h2>
+
+    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+      <input id="taskInput" type="text" placeholder="What needs to be done?" 
+        style="flex: 1; padding: 12px 16px; border: none; border-radius: 8px; background: #3a3a4d; color: #fff; font-size: 16px; outline: none;" />
+      <button onclick="addTask()" 
+        style="padding: 12px 20px; background: #00e0ff; border: none; border-radius: 8px; color: #000; font-weight: bold; cursor: pointer; transition: background 0.3s;">
+        ➕ Add                                                                                                                                                                                                   
+      </button>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 20px;">
+      <button onclick="filterTasks('all')" style="margin-right: 10px; padding: 8px 16px; background: #444; color: #fff; border: none; border-radius: 6px; cursor: pointer;">All</button>
+      <button onclick="filterTasks('active')" style="margin-right: 10px; padding: 8px 16px; background: #444; color: #fff; border: none; border-radius: 6px; cursor: pointer;">Active</button>
+      <button onclick="filterTasks('completed')" style="padding: 8px 16px; background: #444; color: #fff; border: none; border-radius: 6px; cursor: pointer;">Completed</button>
+    </div>
+
+    <ul id="taskList" style="list-style: none; padding: 0;"></ul>
+  </div>
+
+  <script>
+    let tasks = [];
+
+    function addTask() {
+      const input = document.getElementById('taskInput');
+      const taskText = input.value.trim();
+      if (taskText === '') return;
+      tasks.push({ text: taskText, completed: false });
+      input.value = '';
+      renderTasks();
+    }
+
+    function toggleTask(index) {
+      tasks[index].completed = !tasks[index].completed;
+      renderTasks();
+    }
+
+    function deleteTask(index) {
+      tasks.splice(index, 1);
+      renderTasks();
+    }
+
+    function filterTasks(filter = 'all') {
+      renderTasks(filter);
+    }
+
+    function renderTasks(filter = 'all') {
+      const list = document.getElementById('taskList');
+      list.innerHTML = '';
+
+      tasks.forEach((task, index) => {
+        if (filter === 'active' && task.completed) return;
+        if (filter === 'completed' && !task.completed) return;
+
+        const li = document.createElement('li');
+        li.style = "background: #3a3a4d; margin-bottom: 12px; padding: 12px 16px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;";
+
+        const span = document.createElement('span');
+        span.textContent = task.text;
+        span.style = task.completed 
+          ? "text-decoration: line-through; color: #aaa; font-style: italic;" 
+          : "color: #f0f0f0;";
+
+        const controls = document.createElement('div');
+
+        const doneBtn = document.createElement('button');
+        doneBtn.textContent = task.completed ? '↩️ Undo' : '✅ Done';
+        doneBtn.onclick = () => toggleTask(index);
+        doneBtn.style = "margin-right: 8px; background: #00c896; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;";
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = '🗑️';
+        deleteBtn.onclick = () => deleteTask(index);
+        deleteBtn.style = "background: #ff4d4d; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer;";
+
+        controls.appendChild(doneBtn);
+        controls.appendChild(deleteBtn);
+
+        li.appendChild(span);
+        li.appendChild(controls);
+
+        list.appendChild(li);
+      });
+    }
+  </script>
+</body>
+</html>
